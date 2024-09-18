@@ -1,0 +1,6 @@
+﻿services:
+  vehiclemanager.web:
+    image: vehiclemanager.web
+    build:
+      context: .
+      dockerfile: VehicleManager.Web/Dockerfile
