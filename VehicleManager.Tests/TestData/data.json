@@ -1,0 +1,49 @@
+﻿{
+  "name": "Test Company",
+  "vehicles": [
+    {
+      "type": "Car",
+      "model": "CarModel 1",
+      "maxSpeed": 200,
+      "basePrice": 20000,
+      "components": [
+        {
+          "type": "Engine",
+          "model": "Engine Model 1"
+        }
+      ]
+    }
+  ],
+  "components": [
+    {
+      "type": "Engine",
+      "serial": null,
+      "model": "Engine Model 1",
+      "company": "Company 1",
+      "horsePower": 100,
+      "displacement": 2.5,
+      "cylinders": 4,
+      "valvesPerCylinder": 4,
+      "oilCapacity": 4.5,
+      "price": 2000,
+      "bore": 80.5,
+      "stroke": 100,
+      "torque": 200
+    },
+    {
+      "type": "Engine",
+      "serial": null,
+      "model": "Engine Model 2",
+      "company": "Company 1",
+      "horsePower": 150,
+      "displacement": 3.5,
+      "cylinders": 6,
+      "valvesPerCylinder": 4,
+      "oilCapacity": 4.5,
+      "price": 4000,
+      "bore": 80.5,
+      "stroke": 100,
+      "torque": 200
+    }
+  ]
+}
