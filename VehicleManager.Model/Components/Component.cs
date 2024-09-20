@@ -3,8 +3,8 @@
 public record Component()
 {
     public string? Serial { get; init; }
-    public string? Model { get; init; }
     public string Type { get; init; } = "";
+    public string? Model { get; init; }
     public decimal Price { get; init; }
     public string? Company { get; init; }
 

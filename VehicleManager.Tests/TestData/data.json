@@ -14,34 +14,54 @@
       ]
     }
   ],
-  "components": [
-    {
-      "type": "Engine",
-      "model": "Engine Model 1",
-      "company": "Company 1",
-      "horsePower": 100,
-      "displacement": 2.5,
-      "cylinders": 4,
-      "valvesPerCylinder": 4,
-      "oilCapacity": 4.5,
-      "price": 2000,
-      "bore": 80.5,
-      "stroke": 100,
-      "torque": 200
-    },
-    {
-      "type": "Engine",
-      "model": "Engine Model 2",
-      "company": "Company 1",
-      "horsePower": 150,
-      "displacement": 3.5,
-      "cylinders": 6,
-      "valvesPerCylinder": 4,
-      "oilCapacity": 4.5,
-      "price": 4000,
-      "bore": 80.5,
-      "stroke": 100,
-      "torque": 200
-    }
-  ]
+  "components": {
+    "engine": [
+      {
+        "type": "Engine",
+        "model": "Engine Model 1",
+        "company": "Company 1",
+        "horsePower": 100,
+        "displacement": 2.5,
+        "cylinders": 4,
+        "valvesPerCylinder": 4,
+        "oilCapacity": 4.5,
+        "price": 2000,
+        "bore": 80.5,
+        "stroke": 100,
+        "torque": 200
+      },
+      {
+        "type": "Engine",
+        "model": "Engine Model 2",
+        "company": "Company 1",
+        "horsePower": 150,
+        "displacement": 3.5,
+        "cylinders": 6,
+        "valvesPerCylinder": 4,
+        "oilCapacity": 4.5,
+        "price": 4000,
+        "bore": 80.5,
+        "stroke": 100,
+        "torque": 200
+      }
+    ],
+    "battery": [
+      {
+        "type": "Lead Battery",
+        "model": "Bat1",
+        "price": 80,
+        "company": "Varta",
+        "voltage": 12,
+        "maxPowerA": 20
+      },
+      {
+        "type": "Lead Battery",
+        "model": "Bat2",
+        "price": 90,
+        "company": "Varta",
+        "voltage": 12,
+        "maxPowerA": 20
+      }
+    ]
+  }
 }
