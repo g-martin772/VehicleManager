@@ -2,11 +2,11 @@
 
 public record Component()
 {
-    public virtual string? Serial { get; init; }
-    public virtual string? Model { get; init; }
-    public virtual string Type { get; init; } = "";
-    public virtual decimal Price { get; init; }
-    public virtual string? Company { get; init; }
+    public string? Serial { get; init; }
+    public string? Model { get; init; }
+    public string Type { get; init; } = "";
+    public decimal Price { get; init; }
+    public string? Company { get; init; }
 
     public override string ToString()
     {

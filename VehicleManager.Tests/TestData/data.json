@@ -17,7 +17,6 @@
   "components": [
     {
       "type": "Engine",
-      "serial": null,
       "model": "Engine Model 1",
       "company": "Company 1",
       "horsePower": 100,
@@ -32,7 +31,6 @@
     },
     {
       "type": "Engine",
-      "serial": null,
       "model": "Engine Model 2",
       "company": "Company 1",
       "horsePower": 150,
