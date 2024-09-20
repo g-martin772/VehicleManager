@@ -2,17 +2,40 @@
 
 namespace VehicleManager.Model.Vehicles;
 
-public abstract record Vehicle
+public enum VehicleType
 {
-    public abstract string Model { get; init; }
-    public abstract float MaxSpeed { get; init; }
-    public abstract decimal BasePrice { get; init; }
-    public abstract List<Component> Components { get; set; }
+    Car,
+    Truck,
+    Motorcycle,
+    Bicycle,
+    Boat,
+    Plane,
+    Helicopter,
+    Drone
+}
 
-    public abstract void Accelerate(float force);
-    public abstract void Brake(float force);
-    public abstract void TurnLeft(float degrees);
-    public abstract void TurnRight(float degrees);
-    public abstract void Idle();
-    public abstract void ShiftGear(int gear);
+public record Vehicle
+{
+    public VehicleType Type { get; init; }
+    public string Model { get; init; }
+    public float MaxSpeed { get; init; }
+    public decimal BasePrice { get; init; }
+    public List<Component> Components { get; set; }
+
+    #region SimulationParameters
+
+    public float CurrentSpeed { get; set; } = 0;
+    public double Distance { get; set; } = 0;
+
+    public double AccelerationStrength { get; set; } = 0;
+    public double BrakeStrength { get; set; } = 0;
+
+    #endregion
+
+    public void Accelerate() {}
+    public void Brake() {}
+    public void TurnLeft(float degrees) {}
+    public void TurnRight(float degrees) {}
+    public void Idle() {}
+    public void ShiftGear(int gear) {}
 }

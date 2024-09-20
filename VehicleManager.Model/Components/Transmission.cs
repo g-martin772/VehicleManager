@@ -2,8 +2,8 @@
 
 public enum TransmissionGear
 {
-    Neutral,
-    One,
+    Neutral = 0,
+    One = 1,
     Two,
     Three,
     Four,
@@ -25,4 +25,21 @@ public record Transmission : Component
     public required bool Automatic { get; set; }
 
     public TransmissionGear CurrentGear { get; set; }
+
+    public double GearMaxSpeed()
+    {
+        switch ((int)CurrentGear)
+        {
+            case 0:
+                return 0;
+            case 1:
+                return 30;
+            case 2:
+                return 80;
+            case > 2:
+                return 50 *(int) CurrentGear;
+        }
+
+        throw new InvalidOperationException();
+    }
 }
