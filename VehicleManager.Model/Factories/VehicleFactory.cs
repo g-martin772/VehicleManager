@@ -34,12 +34,7 @@ public class VehicleFactory
         
         foreach (var vehicle in vehicles)
         {
-            switch (vehicle["type"]?.Value<string>() ?? throw new JsonException())
-            {
-                case "Car":
-                    AvailableVehicles.Add(JsonConvert.DeserializeObject<Car>(vehicle.ToString())!);
-                    break;
-            }
+            AvailableVehicles.Add(JsonConvert.DeserializeObject<Vehicle>(vehicle.ToString())!);
         }
     }
     
