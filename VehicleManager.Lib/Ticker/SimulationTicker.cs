@@ -10,13 +10,14 @@ public class SimulationTicker : IHostedService, IDisposable
     public List<Vehicle> Vehicles { get; set; } = new();
     private Task TickTask { get; set; }
     private CancellationTokenSource Token { get; set; }
+    private double deltaTime = 0.01;
+    private readonly int waitTime = 10;
 
     public SimulationTicker()
     {
-
     }
 
-    public SimulationTicker(List<Vehicle> vehicles)
+    public SimulationTicker(List<Vehicle> vehicles) : base()
     {
         Vehicles = vehicles;
     }
@@ -31,7 +32,7 @@ public class SimulationTicker : IHostedService, IDisposable
             while (!Token.IsCancellationRequested)
             {
                 await Tick();
-                await Task.Delay(1000);
+                await Task.Delay(waitTime, Token.Token);
             }
         });
 
@@ -54,8 +55,8 @@ public class SimulationTicker : IHostedService, IDisposable
             // if(vehicle.BrakeStrength > 0)
             //     BreakVehicle(vehicle);
             vehicle.CurrentSpeed += (float)increase;
-            double RMP = CalculateRPM(vehicle);
-            Console.WriteLine($"Speed: {vehicle.CurrentSpeed} km/h, \nRPM: {RMP}, \nGear: {vehicle.Components.OfType<Transmission>().First().CurrentGear}\n");
+            vehicle.Components.OfType<Engine>().First().Rpm = (float) CalculateRPM(vehicle);
+            vehicle.Distance += CalculateDistance(vehicle);
         }
     }
 
@@ -68,7 +69,7 @@ public class SimulationTicker : IHostedService, IDisposable
         double maxEngineForce = 4000;
         double vehicleMass = 1570;
         double currentRPM = CalculateRPM(vehicle);
-        double maxForceAtRMP = maxEngineForce * Math.Min(currentRPM / 5000, 1.0);
+        double maxForceAtRPM = maxEngineForce * Math.Min(currentRPM / 5000, 1.0);
         double maxSpeedForGear = transmission.GearMaxSpeed(vehicle.Components.OfType<Wheel>().First());
 
         if (vehicle.CurrentSpeed >= maxSpeedForGear ||
@@ -78,16 +79,14 @@ public class SimulationTicker : IHostedService, IDisposable
             return (int)transmission.CurrentGear < 6 ? CalculateSpeedIncrease(vehicle) : 0;
         }
 
-        double deltaTime = 1; // time between ticks
-        double acceleration = (throttleStrength * maxForceAtRMP) / vehicleMass;
+        double acceleration = (throttleStrength * maxForceAtRPM) / vehicleMass;
         double speedIncrease = acceleration * deltaTime;
 
         double speedIncreaseKMH = speedIncrease * 3.6;
-        vehicle.CurrentSpeed += (float)speedIncreaseKMH;
-        if(speedIncreaseKMH + vehicle.CurrentSpeed > maxSpeedForGear || CalculateRPM(vehicle) > transmission.MaxRpm)
+        double speed = vehicle.CurrentSpeed + speedIncreaseKMH;
+        if(speedIncreaseKMH + vehicle.CurrentSpeed > maxSpeedForGear || CalculateRPM(vehicle) > transmission.MaxRpm ||speed > vehicle.MaxSpeed)
         {
-            vehicle.CurrentSpeed -= (float)speedIncreaseKMH;
-            transmission.CurrentGear = (TransmissionGear) ((int)transmission.CurrentGear >= 6 ? 6 : (int)transmission.CurrentGear + 1);
+            transmission.CurrentGear = (TransmissionGear) ((int)transmission.CurrentGear >= 6 ? 6 : (int)transmission.CurrentGear + 1); // Leave for now change later
             return (int)transmission.CurrentGear < 6 ? CalculateSpeedIncrease(vehicle) : 0;
         }
 
@@ -116,6 +115,8 @@ public class SimulationTicker : IHostedService, IDisposable
 
         return engineRPM;
     }
+
+    private double CalculateDistance(Vehicle vehicle) => vehicle.CurrentSpeed * deltaTime / 3600;
 
 
     public void Dispose()
