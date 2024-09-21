@@ -30,7 +30,6 @@ public class SimulationTicker : IHostedService, IDisposable
         {
             while (!Token.IsCancellationRequested)
             {
-                Console.WriteLine("Tick");
                 await Tick();
                 await Task.Delay(1000);
             }
@@ -49,19 +48,51 @@ public class SimulationTicker : IHostedService, IDisposable
     {
         foreach (var vehicle in Vehicles)
         {
-            if (vehicle.AccelerationStrength > 0)
-                AccelerateVehicle(vehicle);
-            if(vehicle.BrakeStrength > 0)
-                BreakVehicle(vehicle);
-            Console.WriteLine(vehicle.Model + " is moving at " + vehicle.CurrentSpeed + " km/h");
+            double increase = 0;
+            if (vehicle.ThrottleStrength > 0)
+                increase = CalculateSpeedIncrease(vehicle);
+            // if(vehicle.BrakeStrength > 0)
+            //     BreakVehicle(vehicle);
+            vehicle.CurrentSpeed += (float)increase;
+            double RMP = CalculateRPM(vehicle);
+            Console.WriteLine($"Speed: {vehicle.CurrentSpeed} km/h, \nRPM: {RMP}, \nGear: {vehicle.Components.OfType<Transmission>().First().CurrentGear}\n");
         }
     }
 
-    private void AccelerateVehicle(Vehicle vehicle)
+    private double CalculateSpeedIncrease(Vehicle vehicle)
     {
-        double maxSpeed = vehicle.Components.OfType<Transmission>().First().GearMaxSpeed();
-        vehicle.CurrentSpeed += (float)(50 * Math.Cbrt(vehicle.AccelerationStrength * 10));
-        vehicle.CurrentSpeed = vehicle.CurrentSpeed > maxSpeed ? (float)maxSpeed : vehicle.CurrentSpeed;
+        double throttleStrength = vehicle.ThrottleStrength;
+
+        var transmission = vehicle.Components.OfType<Transmission>().First();
+
+        double maxEngineForce = 4000;
+        double vehicleMass = 1570;
+        double currentRPM = CalculateRPM(vehicle);
+        double maxForceAtRMP = maxEngineForce * Math.Min(currentRPM / 5000, 1.0);
+        double maxSpeedForGear = transmission.GearMaxSpeed(vehicle.Components.OfType<Wheel>().First());
+
+        if (vehicle.CurrentSpeed >= maxSpeedForGear ||
+            currentRPM > transmission.MaxRpm)
+        {
+            transmission.CurrentGear = (TransmissionGear) ((int)transmission.CurrentGear >= 6 ? 6 : (int)transmission.CurrentGear + 1);
+            return (int)transmission.CurrentGear < 6 ? CalculateSpeedIncrease(vehicle) : 0;
+        }
+
+        double deltaTime = 1; // time between ticks
+        double acceleration = (throttleStrength * maxForceAtRMP) / vehicleMass;
+        double speedIncrease = acceleration * deltaTime;
+
+        double speedIncreaseKMH = speedIncrease * 3.6;
+        vehicle.CurrentSpeed += (float)speedIncreaseKMH;
+        if(speedIncreaseKMH + vehicle.CurrentSpeed > maxSpeedForGear || CalculateRPM(vehicle) > transmission.MaxRpm)
+        {
+            vehicle.CurrentSpeed -= (float)speedIncreaseKMH;
+            transmission.CurrentGear = (TransmissionGear) ((int)transmission.CurrentGear >= 6 ? 6 : (int)transmission.CurrentGear + 1);
+            return (int)transmission.CurrentGear < 6 ? CalculateSpeedIncrease(vehicle) : 0;
+        }
+
+        return speedIncreaseKMH;
+
     }
 
     private void BreakVehicle(Vehicle vehicle)
@@ -69,6 +100,21 @@ public class SimulationTicker : IHostedService, IDisposable
         vehicle.CurrentSpeed -= (float)(50 * Math.Cbrt(vehicle.BrakeStrength * 10));
         if (vehicle.CurrentSpeed <= 0)
             vehicle.CurrentSpeed = 0;
+    }
+
+    private double CalculateRPM(Vehicle vehicle)
+    {
+        var transmission = vehicle.Components.OfType<Transmission>().First();
+
+        double gearRatio = transmission.GetGearRatio();
+        double finalDriveRatio = transmission.FinalDriveRatio;
+        double wheelDiameter = vehicle.Components.OfType<Wheel>().First().Diamater;
+
+        double speedMetersperSeond = vehicle.CurrentSpeed  * 1000 / 3600;
+        double wheelRPM = (speedMetersperSeond * 60) / (Math.PI * wheelDiameter);
+        double engineRPM = wheelRPM * gearRatio * finalDriveRatio;
+
+        return engineRPM;
     }
 
 

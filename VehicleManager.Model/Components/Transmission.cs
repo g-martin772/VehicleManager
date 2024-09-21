@@ -19,27 +19,23 @@ public enum TransmissionGear
 
 public record Transmission : Component
 {
-    public required (int Gear, int Ratio)[] GearRatios { get; set; }
+    public required (int Gear, double Ratio)[] GearRatios { get; set; }
+    public required double FinalDriveRatio { get; set; }
     public required float MaxRpm { get; set; }
     public required float MaxTorque { get; set; }
     public required bool Automatic { get; set; }
 
     public TransmissionGear CurrentGear { get; set; }
 
-    public double GearMaxSpeed()
+    public double GetGearRatio()
     {
-        switch ((int)CurrentGear)
-        {
-            case 0:
-                return 0;
-            case 1:
-                return 30;
-            case 2:
-                return 80;
-            case > 2:
-                return 50 *(int) CurrentGear;
-        }
+        return GearRatios[(int)CurrentGear].Ratio;
+    }
 
-        throw new InvalidOperationException();
+    public double GearMaxSpeed(Wheel wheel)
+    {
+        double maxWheelRPM = MaxRpm / (GearRatios[(int)CurrentGear].Ratio * FinalDriveRatio);
+        double maxSpeed = (maxWheelRPM * Math.PI * wheel.Diamater * 60) / 1000;
+        return maxSpeed;
     }
 }

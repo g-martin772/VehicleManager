@@ -27,7 +27,7 @@ public record Vehicle
     public float CurrentSpeed { get; set; } = 0;
     public double Distance { get; set; } = 0;
 
-    public double AccelerationStrength { get; set; } = 0;
+    public double ThrottleStrength { get; set; } = 0;
     public double BrakeStrength { get; set; } = 0;
 
     #endregion
