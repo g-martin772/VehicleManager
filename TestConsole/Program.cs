@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel;
-using VehicleManager.Lib.Ticker;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
+using Microsoft.Extensions.Options;
+using VehicleManager.Lib;
 using VehicleManager.Model.Components;
 using VehicleManager.Model.Vehicles;
 using Component = VehicleManager.Model.Components.Component;
@@ -49,19 +52,19 @@ class Program
             },
             CurrentSpeed = 100,
             ThrottleStrength = 1,
-            MaxSpeed = 292
+            MaxSpeed = 292,
+            Model = "TestVehicle",
+            Type = VehicleType.Car
         };
 
+        var vehicleProvider = new VehicleProvider();
+        vehicleProvider.Vehicles.AddRange([vehicle]);
+        ILogger<SimulationTicker> simulationLogger = new Logger<SimulationTicker>(
+            LoggerFactory.Create(builder => builder.AddConsole()));
+        Ticker = new SimulationTicker(vehicleProvider, simulationLogger);
 
-        Ticker = new SimulationTicker(new List<Vehicle>());
-        Ticker.Vehicles.Add(vehicle);
-        await Ticker.StartAsync(new CancellationToken());
-        while (true)
-        {
-            // myVehicle.ThrottleStrength = myVehicle.ThrottleStrength >= 1 ? 1 : myVehicle.ThrottleStrength + 0.1;
-            await Task.Delay(1500);
-            Console.WriteLine($"Speed: {vehicle.CurrentSpeed} km/h, \nRPM: {vehicle.Components.OfType<Engine>().First().Rpm}, \nGear: {vehicle.Components.OfType<Transmission>().First().CurrentGear}\nDistance: {Math.Round((decimal) vehicle.Distance, 3)}km\n");
+        await Ticker.StartAsync(CancellationToken.None);
 
-        }
+        Console.ReadKey();
     }
 }
