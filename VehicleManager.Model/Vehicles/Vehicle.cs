@@ -22,8 +22,18 @@ public record Vehicle
     public decimal BasePrice { get; init; }
     public List<Component> Components { get; set; }
 
-    public void Accelerate(float force) {}
-    public void Brake(float force) {}
+    #region SimulationParameters
+
+    public float CurrentSpeed { get; set; } = 0;
+    public double Distance { get; set; } = 0;
+
+    public double ThrottleStrength { get; set; } = 0;
+    public double BrakeStrength { get; set; } = 0;
+
+    #endregion
+
+    public void Accelerate() {}
+    public void Brake() {}
     public void TurnLeft(float degrees) {}
     public void TurnRight(float degrees) {}
     public void Idle() {}

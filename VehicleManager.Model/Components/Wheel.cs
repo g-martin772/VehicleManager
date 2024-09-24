@@ -14,8 +14,8 @@ public record Wheel : Component
 {
     public required float TreadDepth { get; set; }
     public required float MaxSpeed { get; set; }
-    public required int Width { get; set; }
     public required int Height { get; set; }
+    public required double Diamater { get; set; } // ??? shouldn't this be Diameter?
     public required int Inch { get; set; }
     public required float MaxLoad { get; set; }
     public required float RatedPressure { get; set; }
